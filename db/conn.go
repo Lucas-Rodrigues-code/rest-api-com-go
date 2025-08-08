@@ -3,6 +3,8 @@ package db
 import (
 	"database/sql"
 	"fmt"
+
+	_ "github.com/lib/pq"
 )
 
 const (
@@ -10,7 +12,7 @@ const (
 	port     = 5432
 	user     = "postgres"
 	password = 1234
-	dbname   = "db_go"
+	dbname   = "postgres"
 )
 
 func ConnectDB() (*sql.DB, error) {
