@@ -4,6 +4,7 @@ import (
 	"api-go/model"
 	"api-go/usecase"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -23,6 +24,7 @@ func (p *productController) GetProducts(ctx *gin.Context) {
 	products, err := p.productUseCase.GetProducts()
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
+		return
 	}
 	ctx.JSON(http.StatusOK, products)
 }
@@ -45,4 +47,28 @@ func (p *productController) CreateProduct(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusCreated, insertedProduct)
 
+}
+
+func (p *productController) GetProductByIds(ctx *gin.Context) {
+
+	id := ctx.Param("productId")
+	if id == "" {
+		response := model.Response{Message: "Invalid ID"}
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	productId, err := strconv.Atoi(id)
+	if err != nil {
+		response := model.Response{Message: "ID must be an integer"}
+		ctx.JSON(http.StatusBadRequest, response)
+		return
+	}
+
+	products, err := p.productUseCase.GetProductById(productId)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, err)
+		return
+	}
+	ctx.JSON(http.StatusOK, products)
 }
