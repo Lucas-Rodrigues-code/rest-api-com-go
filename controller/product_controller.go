@@ -49,7 +49,7 @@ func (p *productController) CreateProduct(ctx *gin.Context) {
 
 }
 
-func (p *productController) GetProductByIds(ctx *gin.Context) {
+func (p *productController) GetProductById(ctx *gin.Context) {
 
 	id := ctx.Param("productId")
 	if id == "" {
@@ -65,10 +65,17 @@ func (p *productController) GetProductByIds(ctx *gin.Context) {
 		return
 	}
 
-	products, err := p.productUseCase.GetProductById(productId)
+	product, err := p.productUseCase.GetProductById(productId)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, err)
 		return
 	}
-	ctx.JSON(http.StatusOK, products)
+
+	if product == nil {
+		response := model.Response{Message: "Product not found"}
+		ctx.JSON(http.StatusNotFound, response)
+		return
+	}
+
+	ctx.JSON(http.StatusOK, product)
 }
